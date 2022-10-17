@@ -124,8 +124,11 @@ From #Vaccinated_Percentage
 ORDER BY 1,2
 
 
+-- Creating Views for Power BI
 
+-- 1) Vaccinated Percentage 
 Create View Vaccinated_Percentage as
+With Vaccinated_Percentage (Location, Date, Population, New_Vaccinations, Total_Vaccinated_People) AS(
 SELECT D.location, D.date, D.population, V.new_vaccinations
 , SUM(CAST(V.new_vaccinations AS FLOAT)) OVER (PARTITION BY V.location ORDER BY D.location, D.date) AS Total_Vaccinated_People
 --, (Total_Vaccinated_People/population)*100 -- ERROR let's go to CTE's
@@ -133,6 +136,54 @@ FROM PortfolioProject..Covid_Deaths D
 JOIN PortfolioProject..Covid_Vaccinations V
 	ON D.location = V.location AND D.date= V.date
 WHERE D.continent IS NOT NULL 
-
-SELECT*
+)
+SELECT *, (Total_Vaccinated_People/Population)*100 AS Vaccinated_Percentage
 FROM Vaccinated_Percentage
+
+SELECT *
+FROM Vaccinated_Percentage
+
+
+
+-- 2) Case and Death Percentage
+CREATE VIEW Case_and_Death_Percentage AS
+WITH Case_and_Death_Percentage (Total_Cases, Total_Deaths, Death_Percentage) as (
+Select SUM(new_cases) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_Cases)*100 as Death_Percentage
+From PortfolioProject..Covid_Deaths
+where continent is not null 
+)
+SELECT *
+FROM Case_and_Death_Percentage
+
+-- 3) Infection Percentage
+CREATE VIEW Infection_Percentage AS
+WITH Infection_Percentage (Location, Date, Population, Total_Cases, Infection_Percentage) AS (
+SELECT location, date, population, total_cases, (total_cases/ population)*100 AS Infection_Percentage
+FROM PortfolioProject..Covid_Deaths
+WHERE continent IS NOT NULL
+)
+SELECT *
+FROM Infection_Percentage
+
+-- 4) Highest Infection Percentage
+CREATE VIEW Highest_Infection_Percentage AS
+WITH Highest_Infection_Percentage (Location, Population, Highest_Infection, Highest_Infection_Percentage) AS (
+SELECT location, population, MAX(total_cases) AS Highest_Infection, MAX((total_cases/ population))*100 AS Highest_Infection_Percentage
+FROM PortfolioProject..Covid_Deaths
+WHERE continent IS NOT NULL
+GROUP BY location, population
+)
+SELECT *
+FROM Highest_Infection_Percentage
+
+-- 5) Highest Death Percentage
+CREATE VIEW Highest_Death_Percentage AS
+WITH Highest_Death_Percentage (Location, Population, Total_Death, Highest_Death_Percentage) AS (
+SELECT location, population, MAX(total_deaths) AS Total_Death, MAX((total_deaths/ population))*100 AS Highest_Death_Percentage
+FROM PortfolioProject..Covid_Deaths
+WHERE continent IS NOT NULL
+GROUP BY location, population
+)
+SELECT *
+FROM Highest_Death_Percentage
+
