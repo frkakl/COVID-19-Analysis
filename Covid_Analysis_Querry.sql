@@ -145,15 +145,16 @@ FROM Vaccinated_Percentage
 
 
 
--- 2) Case and Death Percentage
-CREATE VIEW Case_and_Death_Percentage AS
-WITH Case_and_Death_Percentage (Total_Cases, Total_Deaths, Death_Percentage) as (
-Select SUM(new_cases) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_Cases)*100 as Death_Percentage
-From PortfolioProject..Covid_Deaths
-where continent is not null 
+-- 2) Case and Death by Date Percentage
+CREATE VIEW Case_and_Death_Date_Percentage AS
+WITH Case_and_Death_Date_Percentage (Date, Total_Cases, Total_Deaths, Death_Percentage) as (
+SELECT date, SUM(new_cases) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_Cases)*100 as Death_Percentage
+FROM PortfolioProject..Covid_Deaths
+WHERE continent is not null 
+GROUP BY date
 )
 SELECT *
-FROM Case_and_Death_Percentage
+FROM Case_and_Death_Date_Percentage
 
 -- 3) Infection Percentage
 CREATE VIEW Infection_Percentage AS
