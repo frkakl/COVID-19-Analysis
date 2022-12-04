@@ -1,3 +1,2 @@
 # COVID-19 Analysis
- First Portfolio Project
-![Covid_Viz](https://user-images.githubusercontent.com/36813849/198690806-2fec99df-9a9d-4a28-810b-53f441ea268b.jpg)
+![kjhvb](https://user-images.githubusercontent.com/36813849/205482406-00a0bc15-6b6e-4d9d-a278-d62567b29caa.jpg)
